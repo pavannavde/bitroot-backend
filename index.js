@@ -98,6 +98,13 @@ app.post("/search-contacts", async(req, res) => {
     try{
         const contacts = await Contact.find({$or: [{name: name}, {phone: phone}]});
         console.log(contacts);
+        if(contacts.length==0){
+            res.json({
+                status: 422,
+                message: "No contact found"
+            });
+            return 0;
+        }
         res.json({
             status: 200,
             message: "Successfuly fetched all contacts",
@@ -138,8 +145,8 @@ app.post("/update-contact/:id", async(req, res) => {
     const { id } = req.params;
     const { name, phone } = req.body;
     let phoneNumbers = [];
-    if(phone.length > 0){
-       phoneNumbers = phone.split(',');
+    if(phone){
+        phoneNumbers = phone.split(',');
     }
     try{
       //check the numbers are 10 digit
